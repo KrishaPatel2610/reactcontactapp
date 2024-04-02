@@ -1,102 +1,106 @@
 //contactList.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ConfirmationModal from './ConfirmationModal.jsx';
-import { useDispatch } from 'react-redux';
-import { deleteContact } from '../actions/contactActions.js';
+import { useDispatch, useSelector } from 'react-redux';
+import { deleteContact, setContacts } from '../actions/contactActions.js';
+import { deleteContactFromLocalStorage } from '../updateLocalStorageContacts.js';
 
-function ContactList({ contacts }) {
+function ContactList() {
   const dispatch = useDispatch();
 
-  const [contactList, setContactList] = useState(contacts);
-  const [editIndex, setEditIndex] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [toBeDeleted, setToBeDeleted] = useState(null);
+  const finalContacts = useSelector((state) => state.contactReducer.contacts);
+
+  const [deleteConfirmation, setDeleteConfirmation] = useState({
+    isOpen: false,
+    index: null,
+  });
 
   const navigate = useNavigate();
-  useEffect(() => {
-    setContactList(contacts);
-  }, [contacts]);
 
-  const handleEditData = (index) => {
-    navigate('/add-contact', { state: { contact: contactList[index] } });
-    setEditIndex(index);
+  const handleEditData = (contactId, index) => {
+    navigate(`/add-contact/edit/${contactId}`, {
+      state: { contact: finalContacts[index] },
+    });
   };
-  // const confirmDelete = () => {
-  //   const updatedContacts = [...contactList];
-  //   if (toBeDeleted !== null) {
-  //     updatedContacts.splice(toBeDeleted, 1);
-  //     setContactList(updatedContacts);
-  //     localStorage.setItem('contacts', JSON.stringify(updatedContacts));
-  //   }
-  //   closeAndResetModal();
-  // };
-  // const confirmDelete = () => {
-  //   if (toBeDeleted !== null) {
-  //     dispatch(deleteContact(toBeDeleted));
-  //     closeAndResetModal();
-  //   }
-  // };
-  const confirmDelete = () => {
-    const updatedContacts = [...contacts];
-    if (toBeDeleted !== null) {
-      dispatch(deleteContact(contactList[toBeDeleted].email));
 
-      updatedContacts.splice(toBeDeleted, 1);
-      setContactList(updatedContacts);
-      localStorage.setItem('contacts', JSON.stringify(updatedContacts));
+  const confirmDelete = () => {
+    const { index } = deleteConfirmation;
+    if (index !== null) {
+      dispatch(deleteContact(finalContacts[index].contactId));
+      closeAndResetModal();
+      const updatedContacts = deleteContactFromLocalStorage(
+        finalContacts[index].contactId
+      );
+      dispatch(setContacts(updatedContacts));
     }
-    closeAndResetModal();
   };
 
   const closeAndResetModal = () => {
-    setIsModalOpen(false);
-    setToBeDeleted(null);
+    setDeleteConfirmation({ isOpen: false, index: null });
   };
 
   const handleDeleteData = (index) => {
-    setToBeDeleted(index);
-    setIsModalOpen(true);
+    setDeleteConfirmation({ isOpen: true, index: index });
   };
 
   return (
     <div>
-      <h3>Contact List</h3>
       <ConfirmationModal
-        isOpen={isModalOpen}
+        isOpen={deleteConfirmation.isOpen}
         onClose={closeAndResetModal}
         onConfirm={confirmDelete}
       />
-      <table>
-        <tbody>
-          {contactList.map((contact, index) => (
-            <tr key={index}>
-              <td>
-                <img className='img-tbl' src={contact.image} alt='userImg' />
-              </td>
-              <td>{contact.name}</td>
-              <td>{contact.email}</td>
-              <td>{contact.phoneNumber}</td>
-              <td>
-                <button
-                  className='edit-btn'
-                  onClick={() => handleEditData(index)}
-                >
-                  Edit
-                </button>
-                <button
-                  className='delete-btn'
-                  onClick={() => handleDeleteData(index)}
-                >
-                  Delete
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      {finalContacts.length > 0 ? (
+        <table>
+          <tbody>
+            {finalContacts.map((contact, index) => (
+              <tr key={index}>
+                <td>
+                  <img
+                    className='img-tbl'
+                    src={
+                      contact.image ||
+                      'https://thumbs.dreamstime.com/b/default-avatar-profile-flat-icon-social-media-user-vector-portrait-unknown-human-image-default-avatar-profile-flat-icon-184330869.jpg'
+                    }
+                    alt='userImg'
+                  />
+                </td>
+                <td>{contact.name}</td>
+                <td>{contact.email}</td>
+                <td>{contact.phoneNumber}</td>
+                <td>
+                  <button
+                    className='edit-btn'
+                    onClick={() => handleEditData(contact.contactId, index)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className='delete-btn'
+                    onClick={() => handleDeleteData(index)}
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <div className='no-data-section'>
+          <h3 className='no-data'>No contacts found, Please add contacts.</h3>
+          <button
+            className='add-contact-list-btn'
+            onClick={() => {
+              navigate('/add-contact');
+            }}
+          >
+            Add Contact
+          </button>
+        </div>
+      )}
     </div>
   );
 }
-
 export default ContactList;

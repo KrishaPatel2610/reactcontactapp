@@ -17,15 +17,16 @@ const contactReducer = (state = initialState, action) => {
       };
     case 'UPDATE_CONTACT':
       const updatedContacts = state.contacts.map((contact) =>
-        contact.email === action.payload.email ? action.payload : contact
+        contact.id === action.payload.id ? action.payload : contact
       );
+
       return {
         ...state,
         contacts: updatedContacts,
       };
     case 'DELETE_CONTACT':
       const filteredContacts = state.contacts.filter(
-        (contact) => contact.email !== action.payload
+        (contact) => contact.id !== action.payload
       );
 
       return {
@@ -38,14 +39,3 @@ const contactReducer = (state = initialState, action) => {
 };
 
 export default contactReducer;
-
-// case 'DELETE_CONTACT':
-//   const filteredContacts = state.contacts.filter(
-//     (contact) => contact.email !== action.payload
-//   );
-//   // Update local storage
-//   localStorage.setItem('contacts', JSON.stringify(filteredContacts));
-//   return {
-//     ...state,
-//     contacts: filteredContacts,
-//   };

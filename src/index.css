@@ -95,7 +95,8 @@ button {
 .edit-btn,
 .delete-btn,
 .confirm-delete,
-.cancel-btn {
+.cancel-btn,
+.add-contact-list-btn {
   margin: 0.4em;
   padding: 0.7em;
   background: hsl(233deg 36% 38%);
@@ -156,4 +157,22 @@ td {
 h3 {
   color: hsl(233deg 36% 38%);
   text-align: center;
+}
+.no-data {
+  text-align: center;
+}
+
+.no-data-section {
+  background-color: hsl(220, 47%, 96%);
+  border: none;
+  margin-top: 2em;
+  border-radius: 1em;
+  padding: 3em 4em;
+  display: flex;
+  flex-direction: column;
+}
+.remove-img-btn {
+  width: 20px;
+  padding: 5px;
+  margin: 5px;
 }

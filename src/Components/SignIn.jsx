@@ -3,15 +3,13 @@ import React from 'react';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { GoArrowLeft } from 'react-icons/go';
-import AuthService from './AuthService';
+import { login } from './AuthService';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../actions/userActions';
 
-function SignIn({ onSignIn }) {
+function SignIn() {
   const dispatch = useDispatch();
 
-  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -20,7 +18,7 @@ function SignIn({ onSignIn }) {
     emailError: '',
     passwordError: '',
   });
-
+  const navigate = useNavigate();
   const onHandleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -80,38 +78,24 @@ function SignIn({ onSignIn }) {
     return true;
   };
 
-  // const handleSignIn = () => {
-  //   const isEmailValid = validateEmail();
-  //   const isPasswordValid = validatePassword();
-  //   if (isEmailValid && isPasswordValid) {
-  //     const { email, password } = formData;
-  //     if (AuthService.login(email, password))
-  //       toast.success('Logged in successfully!');
-  //     onSignIn();
-  //   }
-  // };
-  const handleSignIn = async () => {
-    try {
-      const isEmailValid = validateEmail();
-      const isPasswordValid = validatePassword();
-      if (isEmailValid && isPasswordValid) {
-        const { email, password } = formData;
-        const user = AuthService.login(email, password);
+  const handleSignIn = () => {
+    const isEmailValid = validateEmail();
+    const isPasswordValid = validatePassword();
+    if (isEmailValid && isPasswordValid) {
+      const { email, password } = formData;
+      const user = login(email, password);
+      if (user) {
         dispatch(setUser(user));
+        navigate('/contact-list');
         toast.success('Logged in successfully!');
-        onSignIn();
+      } else {
+        toast.error('Invalid credentials');
       }
-    } catch (error) {
-      toast.error(error.message);
     }
   };
+
   return (
     <div className='signIn-page'>
-      <GoArrowLeft
-        onClick={() => {
-          navigate(-1);
-        }}
-      />
       <h2 className='heading'>Login</h2>
       <input
         type='email'

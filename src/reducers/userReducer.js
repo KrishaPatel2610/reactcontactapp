@@ -10,11 +10,7 @@ const userReducer = (state = initialState, action) => {
         ...state,
         user: action.payload,
       };
-    case 'CLEAR_USER':
-      return {
-        ...state,
-        user: null,
-      };
+
     default:
       return state;
   }

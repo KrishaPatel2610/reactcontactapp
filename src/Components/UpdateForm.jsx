@@ -1,5 +1,5 @@
 //Add contact.jsx
-import React, { useId, useState } from 'react';
+import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
@@ -12,17 +12,16 @@ import { updateContacts } from '../updateLocalStorageContacts';
 import { CloseButton } from '@chakra-ui/react';
 import { useRef } from 'react';
 
-function AddContact({ contactToEdit = {} }) {
+function UpdateForm({ contactToEdit = {} }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   let { contactId } = useParams();
-  contactId = useId();
 
   const [formData, setFormData] = useState({
-    id: contactToEdit.contactId || contactId,
-    name: contactToEdit.name || '',
-    email: contactToEdit.email || '',
-    phoneNumber: contactToEdit.phoneNumber || '',
+    id: contactToEdit.contactId,
+    name: contactToEdit.name,
+    email: contactToEdit.email,
+    phoneNumber: contactToEdit.phoneNumber,
   });
 
   const [error, setError] = useState({
@@ -219,10 +218,10 @@ function AddContact({ contactToEdit = {} }) {
         <p className='error'>{error.phoneNumberError}</p>
       )}
       <button className='save-btn' onClick={handleSave}>
-        Save
+        Update
       </button>
     </div>
   );
 }
 
-export default AddContact;
+export default UpdateForm;

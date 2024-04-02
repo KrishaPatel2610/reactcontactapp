@@ -2,14 +2,22 @@
 import React from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import Papa from 'papaparse';
-const Home = ({ contacts, onSignOut, setContacts }) => {
-  const navigate = useNavigate();
+import { GoArrowLeft } from 'react-icons/go';
+import { useDispatch } from 'react-redux';
+import { setContacts } from '../actions/contactActions';
+import { setContactInLocalStorage } from '../updateLocalStorageContacts';
 
+const Home = ({ contacts }) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const addContact = () => {
     navigate('/add-contact');
   };
   const viewContact = () => {
     navigate('/contact-list');
+  };
+  const handleSignOut = () => {
+    navigate('/login');
   };
   const exportContactsToCSV = () => {
     const csv = Papa.unparse(contacts);
@@ -33,8 +41,10 @@ const Home = ({ contacts, onSignOut, setContacts }) => {
     }
   };
   const processImportedContacts = (importedContacts) => {
-    setContacts(importedContacts);
+    dispatch(setContacts(importedContacts));
+    setContactInLocalStorage(importedContacts);
   };
+
   const triggerFileInput = () => {
     document.getElementById('csvFileInput').click();
   };
@@ -46,6 +56,7 @@ const Home = ({ contacts, onSignOut, setContacts }) => {
             navigate(-1);
           }}
         >
+          <GoArrowLeft />
           Go back
         </button>
         <input
@@ -59,7 +70,7 @@ const Home = ({ contacts, onSignOut, setContacts }) => {
         <button onClick={exportContactsToCSV}>Export</button>
         <button onClick={addContact}>Add Contact</button>
         <button onClick={viewContact}>View Contact</button>
-        <button onClick={onSignOut}>Logout</button>
+        <button onClick={handleSignOut}>Logout</button>
       </nav>
 
       <Outlet />

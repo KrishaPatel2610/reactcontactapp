@@ -1,14 +1,13 @@
-//Sinup.jsx
+//Sin-up.jsx
 import { useState } from 'react';
-import AuthService from './AuthService';
 import { toast } from 'react-toastify';
 import React from 'react';
-import { GoArrowLeft } from 'react-icons/go';
-import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../actions/userActions';
+import { signUp } from './AuthService';
+import { useNavigate } from 'react-router-dom';
 
-function SignUp({ onSignUp }) {
+function SignUp() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -32,6 +31,7 @@ function SignUp({ onSignUp }) {
 
   const validateEmail = () => {
     const { email } = formData;
+
     if (!email) {
       setError((prevState) => ({
         ...prevState,
@@ -110,24 +110,18 @@ function SignUp({ onSignUp }) {
     const isEmailValid = validateEmail();
     const isPasswordValid = validatePassword();
     const isConfirmPasswordValid = validateConfirmPassword();
-
     if (isEmailValid && isPasswordValid && isConfirmPasswordValid) {
       const { email, password } = formData;
-      const user = AuthService.signUp(email, password);
+      const user = signUp(email, password);
       dispatch(setUser(user));
       toast.success('User registered successfully!');
-      onSignUp();
+      navigate('/login');
     }
   };
 
   return (
     <div>
       <div className='signUp-page'>
-        <GoArrowLeft
-          onClick={() => {
-            navigate(-1);
-          }}
-        />
         <h2 className='heading'>Register Yourself!</h2>
 
         <input

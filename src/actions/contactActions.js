@@ -14,7 +14,7 @@ export const updateContact = (contact) => ({
   payload: contact,
 });
 
-export const deleteContact = (email) => ({
+export const deleteContact = (contactId) => ({
   type: 'DELETE_CONTACT',
-  payload: email,
+  payload: contactId,
 });
